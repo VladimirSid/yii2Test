@@ -6,7 +6,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-
+print (Yii::$app->security->generatePasswordHash('johnBest123'));
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 ?>

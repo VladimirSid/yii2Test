@@ -1,9 +1,12 @@
 <?php
 
+/* @var $color */
+namespace common\classes;
 
 class AppleHtml
 {
-    const HTML_SVG = "<svg viewBox=\"0 0 600 600\" height=\"225\" width=\"225\">
+    const HTML_SVG = "<div onclick='showMdl(this)' data-id=%d class='appleSelected' style='position: absolute; top:%dpx; left:%dpx;'>
+        <svg viewBox=\"10 10 200 200\" height=\"50\" width=\"50\" >
       <!-- top leaf -->
       <path fill=\"green\" d=\"m108,35
             c5.587379,-6.7633 9.348007,-16.178439 8.322067,-25.546439
@@ -12,7 +15,19 @@ class AppleHtml
             c8.976891,0.69453 18.147476,-4.561718 23.73513,-11.329308\" />
        %s   
        %s
-      </svg>";
+      </svg></div>";
+
+    const HTML_SVG_IMG = "<div>
+        <svg viewBox=\"10 10 200 200\" height=\"150\" width=\"150\" >
+      <!-- top leaf -->
+      <path fill=\"green\" d=\"m108,35
+            c5.587379,-6.7633 9.348007,-16.178439 8.322067,-25.546439
+            c-8.053787,10.32369 -17.792625,5.36682 -23.569427,12.126399
+            c-5.177124,5.985922 -9.711121,15.566772 -8.48777,24.749359
+            c8.976891,0.69453 18.147476,-4.561718 23.73513,-11.329308\" />
+       %s   
+       %s
+      </svg></div>";
 
     const HTML_LEFT_HALF_100 = "
       <path fill=\"#%s\" %s d=\"%s
@@ -66,48 +81,48 @@ class AppleHtml
 
 
 
-    public function getAppleSvg ($color, $eaten){
-       if ($eaten <= 0){
+    public function getAppleSvg ($id, $topPos, $leftPos, $color, $eaten = 0, $isImg = false){
+        if ($eaten <= 0){
            $left = sprintf(self::HTML_LEFT_HALF_100, $color, "", self::LEFT_M);
            $right = sprintf(self::HTML_LEFT_HALF_100, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
-       }
-       else if ($eaten <= 20){
-           $left = sprintf(self::HTML_LEFT_HALF_90, $color, "", self::LEFT_M);
-           if ($eaten <= 10)
+        }
+        else if ($eaten <= 20){
+            $left = sprintf(self::HTML_LEFT_HALF_90, $color, "", self::LEFT_M);
+            if ($eaten <= 10)
                $right = sprintf(self::HTML_LEFT_HALF_100, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
-           else
+            else
                $right = sprintf(self::HTML_LEFT_HALF_90, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
-       }
-       else if ($eaten <= 40){
-           $left = sprintf(self::HTML_LEFT_HALF_70, $color, "", self::LEFT_M);
-           if ($eaten <= 30)
-               $right = sprintf(self::HTML_LEFT_HALF_90, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
-           else
+        }
+        else if ($eaten <= 40){
+            $left = sprintf(self::HTML_LEFT_HALF_70, $color, "", self::LEFT_M);
+            if ($eaten <= 30)
+                $right = sprintf(self::HTML_LEFT_HALF_90, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
+            else
+                $right = sprintf(self::HTML_LEFT_HALF_70, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
+        }
+        else if ($eaten <= 60){
+            $left = sprintf(self::HTML_LEFT_HALF_50, $color, "", self::LEFT_M);
+            if ($eaten <= 50)
                $right = sprintf(self::HTML_LEFT_HALF_70, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
-       }
-       else if ($eaten <= 60){
-           $left = sprintf(self::HTML_LEFT_HALF_50, $color, "", self::LEFT_M);
-           if ($eaten <= 50)
-               $right = sprintf(self::HTML_LEFT_HALF_70, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
-           else
+            else
                $right = sprintf(self::HTML_LEFT_HALF_50, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
-       }
-       else if ($eaten <= 80){
-           $left = sprintf(self::HTML_LEFT_HALF_30, $color, "", self::LEFT_M);
-           if ($eaten <= 70)
+        }
+        else if ($eaten <= 80){
+            $left = sprintf(self::HTML_LEFT_HALF_30, $color, "", self::LEFT_M);
+            if ($eaten <= 70)
                $right = sprintf(self::HTML_LEFT_HALF_50, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
-           else
+            else
                $right = sprintf(self::HTML_LEFT_HALF_30, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
-       }
-       else{
+        }
+        else{
            $left = sprintf(self::HTML_LEFT_HALF_10, $color, "", self::LEFT_M);
            if ($eaten <= 90)
                $right = sprintf(self::HTML_LEFT_HALF_30, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
            else
                $right = sprintf(self::HTML_LEFT_HALF_10, $color, self::TRANSFORM_RIGHT_PART, self::RIGHT_M);
-       }
-
-       return sprintf(self::HTML_SVG, $left, $right);
+        }
+        if($isImg) return sprintf(self::HTML_SVG_IMG, $left, $right);
+        else return sprintf(self::HTML_SVG, $id, $topPos, $leftPos, $left, $right);
     }
 }
 

@@ -1,53 +1,75 @@
 <?php
 
 /* @var $this yii\web\View */
+/* @var $appleOnTree */
+/* @var $pagesOn */
+/* @var $selPage */
+use yii\helpers\Html;
+use yii\helpers\Url;
+use common\classes\AppleHtml;
+use yii\bootstrap\Modal;
+use yii\widgets\Pjax;
 
 $this->title = 'My Yii Application';
 ?>
 <div class="site-index">
 
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
 
     <div class="body-content">
-
+        <?php Pjax::begin(['id' => 'appleTree_pjax'])?>
         <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
+            <div class="col-md-12">
+                <div class="col-md-9" style="min-height:600px; border:0px solid red;background:url('<?=Url::to(['/images/tree.png'])?>') no-repeat;background-size: contain;">
+                    <?php foreach ($appleOnTree as $apple){
+                        $AppleHtml = new AppleHtml() ;
+                        echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(100,230), mt_rand(1,530),$apple["color"], $apple["eaten"]);
+                    }
+                    ?>
+                </div>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
+                <div class="col-md-3" style="background-color: #fff">
+                    <ul class="pagination">
+                        <li class="page-item <?php if($selPage==1) echo 'disabled'; ?>">
+                            <?= Html::a('<<', null, ['class' => 'page-link', 'onclick' => 'changePageOn('.$selPage.', "down")'])?>
+                        </li>
+                        <?php
 
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
+                            if ($selPage > $pagesOn - 2) $start = $pagesOn - 2;
+                            elseif ($pagesOn > 3 && $selPage > 2) $start = $selPage - 1;
+                            else $start = 1;
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
+                            if ($selPage < 3 && $pagesOn > 2) $end = 3;
+                            elseif ($selPage >= $pagesOn - 1) $end = $pagesOn;
+                            else $end = $selPage + 1;
 
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
+                            for ($i = $start; $i <= $end; $i++){
+                                $li = $i == $selPage ? '<li class="page-item active">' : '<li class="page-item">';
+                                echo $li.Html::a($i, null, ['class' => 'page-link', 'onclick' =>'setPage(this)']).'</li>';
+                            }
+                        ?>
 
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
+                        <li class="page-item <?php if($selPage==$pagesOn) echo 'disabled'; ?>">
+                            <?= Html::a('>>', null, ['class' => 'page-link', 'onclick' => 'changePageOn('.$selPage.', "up")'])?>
+                        </li>
+                    </ul>
+                    <?= Html::button('Вырастить яблоко', [
+                        'id' => 'btnAddApple',
+                        'class' => 'btn btn-success',
+                        'style' => '',
+                        'onclick' => 'createApple();'
+                    ]);
+                    ?>
+                </div>
             </div>
         </div>
-
+        <?php Pjax::end()?>
     </div>
 </div>
+
+<?php
+    Modal::begin(['id' => 'appleModal']);
+
+    echo Html::tag('div','',['id' => 'appleMdlContent']);
+    Modal::end();
+?>

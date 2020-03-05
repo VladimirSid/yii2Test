@@ -23,7 +23,7 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body>
+<body style="/*background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);*/">
 <?php $this->beginBody() ?>
 
 <div class="wrap">
@@ -32,7 +32,8 @@ AppAsset::register($this);
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
+            'class' => 'navbar-fixed-top',
+
         ],
     ]);
     $menuItems = [

@@ -119,3 +119,9 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+/********* стили страницы яблок **************/
+.appleSelected:hover > svg{
+    width: 60px;
+    height: 60px;
+}

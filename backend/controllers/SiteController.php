@@ -1,11 +1,15 @@
 <?php
 namespace backend\controllers;
 
+use app\models\Apples;
+use common\classes\AppleHtml;
+use common\classes\UsefullFunctions;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use yii\web\Response;
 
 /**
  * Site controller
@@ -26,7 +30,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout', 'index','apple-info'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -60,7 +64,15 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $pageOnTree = isset($_GET["pageOn"]) ? $_GET["pageOn"] : 0;
+        $pagesOn = Apples::find()->where(['fallAt' => null])->count()/3;
+        $applesOnTree = Apples::find()->where(['fallAt' => null])->offset(3*(int)$pageOnTree)->limit(3)->all();
+
+        return $this->render('index', [
+            'appleOnTree' => $applesOnTree,
+            'pagesOn' => ceil($pagesOn-1),
+            'selPage' => $pageOnTree
+        ]);
     }
 
     /**
@@ -97,4 +109,6 @@ class SiteController extends Controller
 
         return $this->goHome();
     }
+
+
 }

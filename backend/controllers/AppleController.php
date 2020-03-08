@@ -9,6 +9,8 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use yii\db\Expression;
+use yii\helpers\Html;
 
 
 class AppleController extends \yii\web\Controller
@@ -20,7 +22,7 @@ class AppleController extends \yii\web\Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['info','create'],
+                        'actions' => ['info','create','down'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -30,6 +32,7 @@ class AppleController extends \yii\web\Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'create' => ['post'],
+                    'down' => ['post'],
                     'info' => ['get']
                 ],
             ],
@@ -60,6 +63,20 @@ class AppleController extends \yii\web\Controller
         $apple->color = $funcs->randomColor();
         $apple->createdAt = date($funcs->generateTimestamp());
         $apple->eaten = 0;
+        return[
+            'success' => $apple->validate() && $apple->save()
+        ];
+
+    }
+
+    public function actionDown(){
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $pageOnTree = isset($_GET["pageOn"]) ? $_GET["pageOn"] : 1;
+        $applesOnTree = Apples::find()->where(['fallAt' => null])->select(['id'])->offset(3*((int)$pageOnTree-1))
+            ->limit(3)->all();
+        $fallenID = $applesOnTree[mt_rand(0, count($applesOnTree)-1)];
+        $apple = Apples::findOne(['id' => $fallenID]);
+        $apple->fallAt = new Expression('NOW()');
         return[
             'success' => $apple->validate() && $apple->save()
         ];

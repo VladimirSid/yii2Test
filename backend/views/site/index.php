@@ -2,8 +2,11 @@
 
 /* @var $this yii\web\View */
 /* @var $appleOnTree */
-/* @var $pagesOn */
-/* @var $selPage */
+/* @var $appleFallTree */
+/* @var $htmlPagesOn */
+/* @var $htmlPagesFall */
+
+
 use yii\helpers\Html;
 use yii\helpers\Url;
 use common\classes\AppleHtml;
@@ -16,54 +19,55 @@ $this->title = 'My Yii Application';
 
 
     <div class="body-content">
-        <?php Pjax::begin(['id' => 'appleTree_pjax'])?>
+
         <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-9" style="min-height:600px; border:0px solid red;background:url('<?=Url::to(['/images/tree.png'])?>') no-repeat;background-size: contain;">
-                    <?php foreach ($appleOnTree as $apple){
+            <?php
+                Pjax::begin(['id' => 'appleTree_pjax', 'class' => 'col-xs-12'
+
+                ]);
+            ?>
+
+
+                <?php
+                Pjax::begin(['id' => 'applesOnTree_pjax']);
+                    foreach ($appleOnTree as $apple){
                         $AppleHtml = new AppleHtml() ;
-                        echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(100,230), mt_rand(1,530),$apple["color"], $apple["eaten"]);
+                        echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(100,230), mt_rand(200,650),$apple["color"], $apple["eaten"]);
                     }
-                    ?>
-                </div>
 
-                <div class="col-md-3" style="background-color: #fff">
-                    <ul class="pagination">
-                        <li class="page-item <?php if($selPage==1) echo 'disabled'; ?>">
-                            <?= Html::a('<<', null, ['class' => 'page-link', 'onclick' => 'changePageOn('.$selPage.', "down")'])?>
-                        </li>
-                        <?php
-
-                            if ($selPage > $pagesOn - 2) $start = $pagesOn - 2;
-                            elseif ($pagesOn > 3 && $selPage > 2) $start = $selPage - 1;
-                            else $start = 1;
-
-                            if ($selPage < 3 && $pagesOn > 2) $end = 3;
-                            elseif ($selPage >= $pagesOn - 1) $end = $pagesOn;
-                            else $end = $selPage + 1;
-
-
-                            for ($i = $start; $i <= $end; $i++){
-                                $li = $i == $selPage ? '<li class="page-item active">' : '<li class="page-item">';
-                                echo $li.Html::a($i, null, ['class' => 'page-link', 'onclick' =>'setPage(this)']).'</li>';
-                            }
-                        ?>
-
-                        <li class="page-item <?php if($selPage==$pagesOn) echo 'disabled'; ?>">
-                            <?= Html::a('>>', null, ['class' => 'page-link', 'onclick' => 'changePageOn('.$selPage.', "up")'])?>
-                        </li>
-                    </ul>
+                ?>
+                <div class="text-center panel-form">
+                    <?= $htmlPagesOn ?>
+                    <br>
                     <?= Html::button('Вырастить яблоко', [
                         'id' => 'btnAddApple',
                         'class' => 'btn btn-success',
-                        'style' => '',
-                        'onclick' => 'createApple();'
-                    ]);
-                    ?>
+                        'onclick' => 'appleAction("create");'
+                    ]); ?>
                 </div>
-            </div>
+                <?php Pjax::end(); ?>
+
+                <?php
+                Pjax::begin(['id' => 'applesDownTree_pjax']);
+                    foreach ($appleFallTree as $apple){
+                        $AppleHtml = new AppleHtml() ;
+                        echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(610,620), mt_rand(140,650),$apple["color"], $apple["eaten"]);
+                    }
+                ?>
+
+                <div class="text-center panel-form">
+                    <?= $htmlPagesFall ?>
+                    <br>
+                    <?= Html::button('Уронить яблоко', [
+                        'id' => 'btnFallApple',
+                        'class' => 'btn btn-warning',
+                        'onclick' => 'appleAction("down");'
+                    ]); ?>
+                </div>
+                <?php Pjax::end(); ?>
+            <?php Pjax::end(); ?>
         </div>
-        <?php Pjax::end()?>
+
     </div>
 </div>
 

@@ -5,6 +5,7 @@ use app\models\Apples;
 use common\classes\AppleHtml;
 use common\classes\UsefullFunctions;
 use Yii;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -64,14 +65,24 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $pageOnTree = isset($_GET["pageOn"]) ? $_GET["pageOn"] : 0;
+        $pageOnTree = isset($_GET["pageOn"]) ? $_GET["pageOn"] : 1;
+        $pageFallTree = isset($_GET["pageFall"]) ? $_GET["pageFall"] : 1;
+
         $pagesOn = Apples::find()->where(['fallAt' => null])->count()/3;
-        $applesOnTree = Apples::find()->where(['fallAt' => null])->offset(3*(int)$pageOnTree)->limit(3)->all();
+        $applesOnTree = Apples::find()->where(['fallAt' => null])->offset(3*((int)$pageOnTree-1))->limit(3)->all();
+
+        $pagesFall = Apples::find()->where(['not', ['fallAt' => null]])->count()/3;
+        $applesFallTree = Apples::find()->where(['not', ['fallAt' => null]])->offset(3*((int)$pageFallTree-1))->limit(3)->all();
+
+        $htmlPagesOn = $this->paginationHtml($pageOnTree, ceil($pagesOn), $applesOnTree, "on");
+        $htmlPagesFall = $this->paginationHtml($pageFallTree, ceil($pagesFall), $applesFallTree, "fall");
 
         return $this->render('index', [
             'appleOnTree' => $applesOnTree,
-            'pagesOn' => ceil($pagesOn-1),
-            'selPage' => $pageOnTree
+            'appleFallTree' => $applesFallTree,
+            'pagesOn' => ceil($pagesOn),
+            'htmlPagesOn' => $htmlPagesOn,
+            'htmlPagesFall' => $htmlPagesFall
         ]);
     }
 
@@ -108,6 +119,47 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+
+    private function paginationHtml($selPage, $pages, $apples, $type){
+        $disabled = $selPage==1 || $pages < 2 ? 'disabled' : '';
+        $listOfLi = '<li class="page-item '.$disabled.'">'
+            .Html::a('<<', null, ['class' => 'page-link',
+                'onclick' => 'changePageOn(this,'.$selPage.', "down", "'.$type.'")']).
+        '</li>';
+
+        if (count($apples) == 0) {
+            $listOfLi = '<li class="page-item disabled"><a>...</a></li>';
+        }
+        else {
+            if ($pages < 3){
+                $start = 1;
+                $end = $pages;
+            }
+            else/* ($pagesOn >= 3)*/{
+                if ($selPage > $pages - 2) $start = $pages - 2;
+                elseif ($pages > 3 && $selPage > 2) $start = $selPage - 1;
+                else $start = 1;
+
+                if ($selPage < 3 && $pages > 2) $end = 3;
+                elseif ($selPage >= $pages - 1) $end = $pages;
+                else $end = $selPage + 1;
+            }
+            for ($i = $start; $i <= $end; $i++){
+                $listOfLi .= $i == $selPage ? '<li class="page-item active">' : '<li class="page-item">';
+                $listOfLi .= Html::a($i, null, ['class' => 'page-link', 'onclick' =>'setPage(this, "'.$type.'")']).'</li>';
+            }
+
+
+        }
+        $disabled = $pages < 2 || $pages == $selPage ? 'disabled' : '';
+        $listOfLi .= '<li class="page-item '.$disabled.'">'
+            .Html::a('>>', null, ['class' => 'page-link',
+                'onclick' => 'changePageOn(this,'.$selPage.', "up", "'.$type.'")']).
+        '</li>';
+        return
+            '<ul class="pagination">'.$listOfLi.'</ul>';
     }
 
 

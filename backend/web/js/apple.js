@@ -1,13 +1,16 @@
 
-function setPage(e) {
-
+function setPage(e, type) {
     let page = $(e).text();
-    $.pjax.reload({
-        url: '/backend/web/site/index',
-        type: 'GET',
-        data: {pageOn:page},
-        container: '#appleTree_pjax'
-    });
+    let url = '/backend/web/site/index';
+    if (type === "on")
+        $.pjax.reload({
+            url: url, type: 'GET', data: {pageOn:page}, container: '#applesOnTree_pjax'
+        });
+    else
+        $.pjax.reload({
+            url: url, type: 'GET', data: {pageFall:page}, container: '#applesDownTree_pjax'
+        });
+
 }
 
 function showMdl(e){
@@ -21,7 +24,7 @@ function showMdl(e){
         //if (data.success){
             $('#appleMdlContent').html(data);
             $('#appleModal').modal();
-            console.log(data);
+            //console.log(data);
        // }
     })
     .fail(function () {
@@ -30,9 +33,9 @@ function showMdl(e){
 }
 
 
-function createApple(){
+function appleAction(action){
     $.ajax({
-        url: '/backend/web/apple/create',
+        url: '/backend/web/apple/' + action,
         type: 'POST'
     })
     .done(function (data) {
@@ -46,13 +49,20 @@ function createApple(){
 }
 
 
-function changePageOn(page, move) {
-    if (move === "up") page++;
-    else if (move === "down") page--;
-    $.pjax.reload({
-        url: '/backend/web/site/index',
-        type: 'GET',
-        data: {pageOn:page},
-        container: '#appleTree_pjax'
-    });
+function changePageOn(e, page, move, type) {
+    if (!$(e).parent().hasClass('disabled')){
+        if (move === "up") page++;
+        else if (move === "down") page--;
+    }
+    else return;
+    
+    let url = '/backend/web/site/index';
+    if (type === "on")
+        $.pjax.reload({
+            url: url, type: 'GET', data: {pageOn:page}, container: '#applesOnTree_pjax'
+        });
+    else
+        $.pjax.reload({
+            url: url, type: 'GET', data: {pageFall:page}, container: '#applesDownTree_pjax'
+        });
 }

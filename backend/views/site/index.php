@@ -3,8 +3,10 @@
 /* @var $this yii\web\View */
 /* @var $appleOnTree */
 /* @var $appleFallTree */
+/* @var $appleBad */
 /* @var $htmlPagesOn */
 /* @var $htmlPagesFall */
+/* @var $htmlPagesBad */
 
 
 use yii\helpers\Html;
@@ -19,55 +21,73 @@ $this->title = 'My Yii Application';
 
 
     <div class="body-content">
-
         <div class="row">
-            <?php
-                Pjax::begin(['id' => 'appleTree_pjax', 'class' => 'col-xs-12'
+            <div class="ground"></div>
+            <?php  Pjax::begin(['id' => 'appleTree_pjax', 'class' => 'col-xs-12']);  ?>
 
-                ]);
+            <!-- ************************** -->
+            <!-- показ яблок на дереве -->
+            <?php
+            Pjax::begin(['id' => 'applesOnTree_pjax']);
+                foreach ($appleOnTree as $apple){
+                    $AppleHtml = new AppleHtml() ;
+                    echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(100,230), mt_rand(200,650),$apple["color"], $apple["eaten"]);
+                }
+
+            ?>
+            <div class="text-center panel-form">
+                <h4>Яблоки на дереве</h4>
+                <?= $htmlPagesOn ?>
+                <br>
+                <?= Html::button('Вырастить яблоко', [
+                    'id' => 'btnAddApple',
+                    'class' => 'btn btn-success',
+                    'onclick' => 'appleAction("create");'
+                ]); ?>
+            </div>
+            <?php Pjax::end(); ?>
+
+
+            <!-- ************************** -->
+            <!-- показ упавших яблок -->
+            <?php
+            Pjax::begin(['id' => 'applesDownTree_pjax']);
+                foreach ($appleFallTree as $apple){
+                    $AppleHtml = new AppleHtml() ;
+                    echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(500,520), mt_rand(180,670),$apple["color"], $apple["eaten"]);
+                }
+            ?>
+            <div class="text-center panel-form">
+                <h4>Упавшие яблоки</h4>
+                <?= $htmlPagesFall ?>
+                <br>
+                <?= Html::button('Уронить яблоко', [
+                    'id' => 'btnFallApple',
+                    'class' => 'btn btn-warning',
+                    'onclick' => 'appleAction("down");'
+                ]); ?>
+            </div>
+            <?php Pjax::end(); ?>
+
+
+            <!-- ************************** -->
+            <!-- показ испорченных яблок -->
+            <?php
+                Pjax::begin(['id' => 'applesBad_pjax']);
+                foreach ($appleBad as $apple){
+                    $AppleHtml = new AppleHtml() ;
+                    echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(610,630), mt_rand(180,670),$apple["color"], $apple["eaten"]);
+                }
             ?>
 
-
-                <?php
-                Pjax::begin(['id' => 'applesOnTree_pjax']);
-                    foreach ($appleOnTree as $apple){
-                        $AppleHtml = new AppleHtml() ;
-                        echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(100,230), mt_rand(200,650),$apple["color"], $apple["eaten"]);
-                    }
-
-                ?>
-                <div class="text-center panel-form">
-                    <?= $htmlPagesOn ?>
-                    <br>
-                    <?= Html::button('Вырастить яблоко', [
-                        'id' => 'btnAddApple',
-                        'class' => 'btn btn-success',
-                        'onclick' => 'appleAction("create");'
-                    ]); ?>
-                </div>
-                <?php Pjax::end(); ?>
-
-                <?php
-                Pjax::begin(['id' => 'applesDownTree_pjax']);
-                    foreach ($appleFallTree as $apple){
-                        $AppleHtml = new AppleHtml() ;
-                        echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(610,620), mt_rand(140,650),$apple["color"], $apple["eaten"]);
-                    }
-                ?>
-
-                <div class="text-center panel-form">
-                    <?= $htmlPagesFall ?>
-                    <br>
-                    <?= Html::button('Уронить яблоко', [
-                        'id' => 'btnFallApple',
-                        'class' => 'btn btn-warning',
-                        'onclick' => 'appleAction("down");'
-                    ]); ?>
-                </div>
-                <?php Pjax::end(); ?>
+            <div class="text-center panel-form">
+                <h4>Ипорченные яблоки</h4>
+                <?= $htmlPagesBad ?>
+            </div>
             <?php Pjax::end(); ?>
+            <!-- ************************** -->
+        <?php Pjax::end(); ?>
         </div>
-
     </div>
 </div>
 

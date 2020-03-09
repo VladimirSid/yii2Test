@@ -48,10 +48,12 @@ class AppleController extends \yii\web\Controller
        // Yii::$app->response->format = Response::FORMAT_JSON;
         $apple = Apples::findOne(['id' => $id]);
 
+        $timeOnGround = date_diff(new \DateTime(),new \DateTime($apple->fallAt));
         $appleSvg = new AppleHtml();
         return $this->renderAjax('info',[
             'appleSvg' => $appleSvg->getAppleSvg($apple->id,  0, 0, $apple->color, $apple->eaten, true),
-            'model' => $apple
+            'model' => $apple,
+            'timeOnGround' => $timeOnGround
         ]);
     }
 

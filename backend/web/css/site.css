@@ -124,10 +124,16 @@ a.desc:after {
 #appleTree_pjax{
     min-height:600px;
     border:0 solid red;
-    background:url('../images/tree.png') no-repeat;
+    background:url('../images/tree.png') no-repeat, url('../images/ground.png') bottom no-repeat;
     background-size: contain;'
 }
+.ground{
 
+    min-height:100px;
+    position: fixed;
+    top: 0;
+    bottom: 500px;
+}
 .appleSelected:hover > svg{
     width: 60px;
     height: 60px;
@@ -156,4 +162,14 @@ li > a {
 br{
     margin: 0;
     padding: 0;
+}
+
+ul.pagination{
+    margin: 0;
+}
+
+h4 {
+    color: #3c763d;
+    margin-top: 0;
+    padding-top: 0;
 }

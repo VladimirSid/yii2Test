@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
 use yii\web\Response;
+use yii\db\Expression;
 
 /**
  * Site controller
@@ -65,24 +66,36 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        /* выбранные страницы */
         $pageOnTree = isset($_GET["pageOn"]) ? $_GET["pageOn"] : 1;
         $pageFallTree = isset($_GET["pageFall"]) ? $_GET["pageFall"] : 1;
+        $pageBadApple = isset($_GET["pageBad"]) ? $_GET["pageBad"] : 1;
 
+        /* яблоки на дереве */
         $pagesOn = Apples::find()->where(['fallAt' => null])->count()/3;
         $applesOnTree = Apples::find()->where(['fallAt' => null])->offset(3*((int)$pageOnTree-1))->limit(3)->all();
 
-        $pagesFall = Apples::find()->where(['not', ['fallAt' => null]])->count()/3;
-        $applesFallTree = Apples::find()->where(['not', ['fallAt' => null]])->offset(3*((int)$pageFallTree-1))->limit(3)->all();
+        /* упавшие яблоки */
+        $pagesFall = Apples::find()->where(['>', 'DATE_ADD(`fallAt`, INTERVAL 5 HOUR)', new Expression("NOW()")])->count()/3;
+        $applesFallTree = Apples::find()->where(['>', 'DATE_ADD(`fallAt`, INTERVAL 5 HOUR)', new Expression("NOW()")])->offset(3*((int)$pageFallTree-1))->limit(3)->all();
 
+        /* испорченные яблоки */
+        $pagesBad = Apples::find()->where(['<=', 'DATE_ADD(`fallAt`, INTERVAL 5 HOUR)', new Expression("NOW()")])->count()/3;
+        $applesBad = Apples::find()->where(['<=', 'DATE_ADD(`fallAt`, INTERVAL 5 HOUR)', new Expression("NOW()")])->offset(3*((int)$pageBadApple-1))->limit(3)->all();
+
+        /* html <ul>...</ul> пагинация для 3 типов яблок */
         $htmlPagesOn = $this->paginationHtml($pageOnTree, ceil($pagesOn), $applesOnTree, "on");
         $htmlPagesFall = $this->paginationHtml($pageFallTree, ceil($pagesFall), $applesFallTree, "fall");
+        $htmlPagesBad = $this->paginationHtml($pageBadApple, ceil($pagesBad), $applesBad, "bad");
 
         return $this->render('index', [
             'appleOnTree' => $applesOnTree,
             'appleFallTree' => $applesFallTree,
+            'appleBad' => $applesBad,
             'pagesOn' => ceil($pagesOn),
             'htmlPagesOn' => $htmlPagesOn,
-            'htmlPagesFall' => $htmlPagesFall
+            'htmlPagesFall' => $htmlPagesFall,
+            'htmlPagesBad' => $htmlPagesBad
         ]);
     }
 

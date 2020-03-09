@@ -6,10 +6,12 @@ function setPage(e, type) {
         $.pjax.reload({
             url: url, type: 'GET', data: {pageOn:page}, container: '#applesOnTree_pjax'
         });
-    else
+    else if(type === "fall")
         $.pjax.reload({
             url: url, type: 'GET', data: {pageFall:page}, container: '#applesDownTree_pjax'
         });
+    else
+        $.pjax.reload({ url: url, type: 'GET', data: {pageBad:page}, container: '#applesBad_pjax'});
 
 }
 
@@ -55,14 +57,12 @@ function changePageOn(e, page, move, type) {
         else if (move === "down") page--;
     }
     else return;
-    
+
     let url = '/backend/web/site/index';
     if (type === "on")
-        $.pjax.reload({
-            url: url, type: 'GET', data: {pageOn:page}, container: '#applesOnTree_pjax'
-        });
+        $.pjax.reload({ url: url, type: 'GET', data: {pageOn:page}, container: '#applesOnTree_pjax' });
+    else if (type === "fall")
+        $.pjax.reload({ url: url, type: 'GET', data: {pageFall:page}, container: '#applesDownTree_pjax' });
     else
-        $.pjax.reload({
-            url: url, type: 'GET', data: {pageFall:page}, container: '#applesDownTree_pjax'
-        });
+        $.pjax.reload({ url: url, type: 'GET', data: {pageBad:page}, container: '#applesBad_pjax' });
 }

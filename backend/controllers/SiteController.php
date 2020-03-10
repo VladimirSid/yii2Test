@@ -143,7 +143,7 @@ class SiteController extends Controller
         '</li>';
 
         if (count($apples) == 0) {
-            $listOfLi = '<li class="page-item disabled"><a>...</a></li>';
+            $listOfLi .= '<li class="page-item disabled"><a>...</a></li>';
         }
         else {
             if ($pages < 3){

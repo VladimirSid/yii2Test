@@ -31,7 +31,7 @@ $this->title = 'My Yii Application';
             Pjax::begin(['id' => 'applesOnTree_pjax']);
                 foreach ($appleOnTree as $apple){
                     $AppleHtml = new AppleHtml() ;
-                    echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(100,230), mt_rand(200,650),$apple["color"], $apple["eaten"]);
+                    echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(100,230), mt_rand(40,450),$apple["color"], $apple["eaten"]);
                 }
 
             ?>
@@ -54,7 +54,7 @@ $this->title = 'My Yii Application';
             Pjax::begin(['id' => 'applesDownTree_pjax']);
                 foreach ($appleFallTree as $apple){
                     $AppleHtml = new AppleHtml() ;
-                    echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(500,520), mt_rand(180,670),$apple["color"], $apple["eaten"]);
+                    echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(290,300), mt_rand(40,450),$apple["color"], $apple["eaten"]);
                 }
             ?>
             <div class="text-center panel-form">
@@ -76,7 +76,7 @@ $this->title = 'My Yii Application';
                 Pjax::begin(['id' => 'applesBad_pjax']);
                 foreach ($appleBad as $apple){
                     $AppleHtml = new AppleHtml() ;
-                    echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(610,630), mt_rand(180,670),$apple["color"], $apple["eaten"]);
+                    echo $AppleHtml->getAppleSvg($apple["id"], mt_rand(250,260), mt_rand(40,450),$apple["color"], $apple["eaten"]);
                 }
             ?>
 

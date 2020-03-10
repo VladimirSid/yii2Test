@@ -22,7 +22,7 @@ class AppleController extends \yii\web\Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['info','create','down'],
+                        'actions' => ['info','create','down','eat'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -33,6 +33,7 @@ class AppleController extends \yii\web\Controller
                 'actions' => [
                     'create' => ['post'],
                     'down' => ['post'],
+                    'eat' => ['post'],
                     'info' => ['get']
                 ],
             ],
@@ -45,10 +46,13 @@ class AppleController extends \yii\web\Controller
 
 
     public function actionInfo($id){
-       // Yii::$app->response->format = Response::FORMAT_JSON;
         $apple = Apples::findOne(['id' => $id]);
 
-        $timeOnGround = date_diff(new \DateTime(),new \DateTime($apple->fallAt));
+        $diffTime = date_diff(new \DateTime(),new \DateTime($apple->fallAt));
+        if ($apple->fallAt == null) $timeOnGround = "не упало";
+        elseif ($diffTime->h >= 5) $timeOnGround = "более 5 часов";
+        else $timeOnGround = $diffTime->h." ч. ".$diffTime->i." мин.";
+
         $appleSvg = new AppleHtml();
         return $this->renderAjax('info',[
             'appleSvg' => $appleSvg->getAppleSvg($apple->id,  0, 0, $apple->color, $apple->eaten, true),
@@ -83,5 +87,25 @@ class AppleController extends \yii\web\Controller
             'success' => $apple->validate() && $apple->save()
         ];
 
+    }
+
+
+    public function actionEat(){
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (Yii::$app->request->isAjax && isset($_POST["percent"]) && isset($_POST["id"])){
+            $id = $_POST["id"];
+            $eat = $_POST["percent"];
+            if (is_numeric($eat) && ($eat == 100 || ($eat <= 17 && $eat > 1))) {
+                $apple = Apples::findOne(['id' => $id]);
+                $apple->eaten += $eat;
+                if ($apple->eaten > 100) $apple->eaten = 100;
+                return[
+                    'success' => $apple->save()
+                ];
+            }
+        }
+        return[
+            'success' => false
+        ];
     }
 }

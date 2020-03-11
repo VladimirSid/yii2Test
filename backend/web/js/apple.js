@@ -35,10 +35,11 @@ function showMdl(e){
 }
 
 
-function appleAction(action){
+function appleAction(action, id){
     $.ajax({
         url: '/backend/web/apple/' + action,
-        type: 'POST'
+        type: 'POST',
+        data: {id: id}
     })
     .done(function (data) {
         if (data.success){
@@ -50,7 +51,7 @@ function appleAction(action){
     });
 }
 
-
+/**** СМЕНА СТР. (след., пред.)****/
 function changePageOn(e, page, move, type) {
     if (!$(e).parent().hasClass('disabled')){
         if (move === "up") page++;

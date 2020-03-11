@@ -10,7 +10,6 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\db\Expression;
-use yii\helpers\Html;
 
 
 class AppleController extends \yii\web\Controller
@@ -22,7 +21,7 @@ class AppleController extends \yii\web\Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['info','create','down','eat'],
+                        'actions' => ['info','create','down','eat', 'stat'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -34,7 +33,8 @@ class AppleController extends \yii\web\Controller
                     'create' => ['post'],
                     'down' => ['post'],
                     'eat' => ['post'],
-                    'info' => ['get']
+                    'info' => ['get'],
+                    'stat' => ['get']
                 ],
             ],
         ];
@@ -95,9 +95,11 @@ class AppleController extends \yii\web\Controller
         else{
             $applesOnTree = Apples::find()->where(['fallAt' => null])->select(['id'])->offset(3*((int)$pageOnTree-1))
                 ->limit(3)->all();
+            if ($applesOnTree == null) return ['success' => false];
             $fallenID = $applesOnTree[mt_rand(0, count($applesOnTree)-1)];
         }
         $apple = Apples::findOne(['id' => $fallenID]);
+        if ($apple == null) return ['success' => false];
         $apple->fallAt = new Expression('NOW()');
         return[
             'success' => $apple->validate() && $apple->save()
@@ -112,7 +114,11 @@ class AppleController extends \yii\web\Controller
             $id = $_POST["id"];
             $eat = $_POST["percent"];
             if (is_numeric($eat) && ($eat == 100 || ($eat <= 17 && $eat > 1))) {
-                $apple = Apples::findOne(['id' => $id]);
+                $apple = Apples::find()->where(['id' => $id])
+                    ->andWhere(['not', ['fallAt' => null]])
+                    ->andWhere(['>', 'DATE_ADD(`fallAt`, INTERVAL 5 HOUR)', new Expression("NOW()")])
+                    ->one();
+                if ($apple == null)  return['success' => false];
                 $apple->eaten += $eat;
                 if ($apple->eaten >= 100) return ['success' => $apple->delete()];
                 return[
@@ -123,5 +129,19 @@ class AppleController extends \yii\web\Controller
         return[
             'success' => false
         ];
+    }
+
+
+    public function actionStat(){
+        $appleStat = Apples::find()->select([
+            'count(case when `fallAt` is null then 1 end) onTree',
+            'count(case when DATE_ADD(`fallAt`, INTERVAL 5 HOUR) > NOW() then 1 end) fallenApples',
+            'count(case when DATE_ADD(`fallAt`, INTERVAL 5 HOUR) <= NOW() then 1 end) badApples',
+        ])->asArray()->all();
+
+
+        return $this->renderAjax('stat',[
+            'stat' => $appleStat
+        ]);
     }
 }

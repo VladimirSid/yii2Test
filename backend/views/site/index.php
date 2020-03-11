@@ -86,6 +86,8 @@ $this->title = 'My Yii Application';
             </div>
             <?php Pjax::end(); ?>
             <!-- ************************** -->
+
+            <?= Html::button('Показать статистику', ['class' => 'btn-lg btn-default panel-form', 'onclick' => 'showMdl(this, "stat")'])?>
         <?php Pjax::end(); ?>
         </div>
     </div>

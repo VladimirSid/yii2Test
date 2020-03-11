@@ -177,3 +177,7 @@ h4 {
 .footer {
     padding: 14px !important;
 }
+
+.btn {
+    margin-right: 5px;
+}

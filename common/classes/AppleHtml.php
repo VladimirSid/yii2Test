@@ -5,7 +5,7 @@ namespace common\classes;
 
 class AppleHtml
 {
-    const HTML_SVG = "<div onclick='showMdl(this)' data-id=%d class='appleSelected' style='position: absolute;'>
+    const HTML_SVG = "<div onclick='showMdl(this, \"info\")' data-id=%d class='appleSelected' style='position: absolute;'>
         <svg viewBox=\"10 10 200 200\" height=\"50\" width=\"50\" style='position: relative;  top:%dpx; left:%dpx;'>
       <!-- top leaf -->
       <path fill=\"green\" d=\"m108,35

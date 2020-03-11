@@ -15,10 +15,10 @@ function setPage(e, type) {
 
 }
 
-function showMdl(e){
+function showMdl(e, action){
     let id = $(e).data('id');
     $.ajax({
-        url: '/backend/web/apple/info',
+        url: '/backend/web/apple/' + action,
         type: 'GET',
         data: {id: id}
     })

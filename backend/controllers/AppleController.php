@@ -45,6 +45,7 @@ class AppleController extends \yii\web\Controller
     }
 
 
+    /*** ИНФО О ЯБЛОКЕ ***/
     public function actionInfo($id){
         $apple = Apples::findOne(['id' => $id]);
 
@@ -85,6 +86,9 @@ class AppleController extends \yii\web\Controller
 
     }
 
+    /*** ПАДЕНИЕ ЯБЛОКА ***/
+    /* $fallenID - id яблока либо явно указывается из карточки яблока,
+        либо рандомно из висящих на дереве на текущей странице */
     public function actionDown(){
         Yii::$app->response->format = Response::FORMAT_JSON;
         $pageOnTree = isset($_GET["pageOn"]) ? $_GET["pageOn"] : 1;
@@ -107,7 +111,9 @@ class AppleController extends \yii\web\Controller
 
     }
 
-
+    /**** ОТКУСЫВАНИЕ ЯБЛОКА ****/
+    /*  1 укус от 2% до 17%
+        при достижении 100% яблоко удаляется */
     public function actionEat(){
         Yii::$app->response->format = Response::FORMAT_JSON;
         if (Yii::$app->request->isAjax && isset($_POST["percent"]) && isset($_POST["id"])){

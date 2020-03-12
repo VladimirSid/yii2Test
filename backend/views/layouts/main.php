@@ -9,9 +9,12 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use common\widgets\Alert;
+use yii\helpers\Url;
 
 AppAsset::register($this);
-$this->title = "Ферма джона"
+$this->title = "Ферма Джона";
+$this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => Url::to(['images/favicon.png'])]);
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -30,7 +33,11 @@ $this->title = "Ферма джона"
 <div class="wrap">
     <?php
     NavBar::begin([
-            'brandLabel' => Yii::$app->name,
+            'brandLabel' => Html::img(Url::to(['images/favicon.png']), ['width' => '50px',
+                    'style' => ['float' => 'left']])
+                .Html::label("Ферма Джона",null, [
+                        'style' => ['margin-top' => '15px']
+                ]),
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-fixed-top',

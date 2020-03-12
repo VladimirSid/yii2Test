@@ -17,6 +17,7 @@ use yii\helpers\Html;
     </div>
     <div class="col-sm-7">
         <b>ID: <?= $model->id ?></b><br>
+        <b>Цвет:</b> <?= '#'.$model->color ?><br>
         <b>Дата появления:</b> <?= $model->createdAt ?><br>
         <b>Дата падения:</b> <?= $model->fallAt == null ? "не упало" : $model->fallAt ?><br>
         <b>Пролежало на земле:</b> <?= $timeOnGround ?><br>

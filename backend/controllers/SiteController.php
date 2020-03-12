@@ -64,6 +64,11 @@ class SiteController extends Controller
      *
      * @return string
      */
+
+    /*** ГЛАВНАЯ СТР. ***/
+    /* - OnTree - яблоки на дереве
+       - FallTree - упавшие яблоки, но не испорчены (можно есть)
+       - BadApple - пролежавшие более 5 часов (плохие) */
     public function actionIndex()
     {
         /* выбранные страницы */
@@ -135,6 +140,11 @@ class SiteController extends Controller
     }
 
 
+    /**** ГЕНЕРАЦИЯ html кода для страниц ****/
+    /* - $selPage - выбранная страницы
+       - $pages - всего страниц
+       - $apples - массив объектов яблок для выбранной страницы
+       - $type - тип, для которго генерируются стр. (на дереве, упавшие, плохие) */
     private function paginationHtml($selPage, $pages, $apples, $type){
         $disabled = $selPage==1 || $pages < 2 ? 'disabled' : '';
         $listOfLi = '<li class="page-item '.$disabled.'">'
